@@ -16,11 +16,16 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	// 保证ifstream对象可以抛出异常：
 	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+	const std::string shader_base_dir = "../../shader/";
+	const std::string vertex_path = shader_base_dir + vertexPath;
+	const std::string fragment_path = shader_base_dir + fragmentPath;
+
 	try
 	{
 		// 打开文件
-		vShaderFile.open(vertexPath);
-		fShaderFile.open(fragmentPath);
+		vShaderFile.open(vertex_path.c_str());
+		fShaderFile.open(fragment_path.c_str());
 		std::stringstream vShaderStream, fShaderStream;
 		// 读取文件的缓冲内容到数据流中
 		vShaderStream << vShaderFile.rdbuf();
