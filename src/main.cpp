@@ -24,7 +24,6 @@ int main(int argc, char* argv[])
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-
 	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
 	if (window == NULL)
 	{
@@ -43,12 +42,17 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	int nrAttributes;
+	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+	std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
+
+
 	// 顶点坐标
 	float vertices[] = {
-		0.5f, 0.5f, 0.0f,   // 右上角
-		0.5f, -0.5f, 0.0f,  // 右下角
-		-0.5f, -0.5f, 0.0f, // 左下角
-		-0.5f, 0.5f, 0.0f   // 左上角
+		0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // 右上角
+		0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // 右下角
+		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f, // 左下角
+		-0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 1.0f   // 左上角
 	};
 
 	// 顶点索引
@@ -73,8 +77,13 @@ int main(int argc, char* argv[])
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	// 位置属性
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	// 颜色属性
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	Shader shader("shader.vs", "shader.ss");
 
@@ -86,6 +95,7 @@ int main(int argc, char* argv[])
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
